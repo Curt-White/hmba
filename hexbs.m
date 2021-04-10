@@ -15,25 +15,23 @@
 % window_size: the size of the search window
 % Seach for the best match of the anchor block in the target image and
 % return a vector pointing to the best location
-function [drow, dcol] = hexbs(row, col, anchor_block, target_image, win_size)
+function [drow, dcol, op_count] = hexbs(row, col, anchor_block, target_image, win_size)
     [block_size, ~] = size(anchor_block);
     [rows, cols] = size(target_image);
 
     curr_row = row; 
     curr_col = col;
     curr_pos = 4; % The current point on the hexagon (ex. TL, TR, etc.)
+    op_count = 0;
     
-    window_bb = [row-win_size, col-win_size; row+win_size, col+win_size;];
+    window_bb = [max(1,row-win_size), max(1, col-win_size); row+win_size, col+win_size;];
     min_mad = intmax('int32'); % Minimum MAD value
     while true
-%         if curr_col - col > 7 || curr_row - row > 7
-%             disp("over");
-%         end
-
         points = get_search_points(curr_row, curr_col, curr_pos, window_bb(1,:), window_bb(2,:), rows, cols, block_size);
         curr_pos = 4; % Reset to center
         
         [new_min_mad, new_pos, ~] = find_minimum(points, anchor_block, target_image);
+        op_count = op_count + sum(points(:,1) ~= -1) * numel(anchor_block); % counting number of operations
         if new_min_mad < min_mad
             min_mad = new_min_mad;
             curr_pos = new_pos;
@@ -44,6 +42,7 @@ function [drow, dcol] = hexbs(row, col, anchor_block, target_image, win_size)
             sub_points = get_inner_search_points(curr_row, curr_col, window_bb(1,:), window_bb(2,:), rows, cols, block_size);
             
             [new_sub_min, new_sub_pos, ~] = find_minimum(sub_points, anchor_block, target_image);
+            op_count = op_count + sum(sub_points(:,1) ~= -1) * numel(anchor_block); 
             if new_sub_min < min_mad
                 sub_pos = new_sub_pos;
             end
