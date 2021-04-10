@@ -1,4 +1,4 @@
-function [mvs, op_count] = hbma(anchor, target, tier, block_size, window_size)
+function [mvs, op_count] = hbma(anchor, target, tier, block_size, window_size, matching_alg)
     % IF:
     % 1. if tier is 1 (highest) then find the motion vectors on image and ret
     % else subsample image and recurse with decremented tier value and
@@ -27,7 +27,7 @@ function [mvs, op_count] = hbma(anchor, target, tier, block_size, window_size)
     else
         new_anchor = imresize(anchor, 0.5);
         new_target = imresize(target, 0.5);
-        [prev_mvs, ops] = hbma(new_anchor, new_target, tier-1, block_size, window_size);
+        [prev_mvs, ops] = hbma(new_anchor, new_target, tier-1, block_size, window_size, matching_alg);
         op_count = op_count + ops;
         
         for row = 1:block_size:rows
