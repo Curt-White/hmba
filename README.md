@@ -13,5 +13,4 @@ The exported function of this file finds a complete set of motion vectors for th
 A simple example of how to use the functions in bma_tools. You shouldnt need to use the functions in hexbs.m or hmba.m directly
 
 ### Notes
- * I fear that there may be some confusion over the target and anchor frame naming. When passing in to the system, the anchor frame is the frame that we are trying to find a matching block for in the target frame. I may have gotten this backwards from what is mentioned in class.
  * The **tic** and **toc** functions can be used to time a given section of the code.
